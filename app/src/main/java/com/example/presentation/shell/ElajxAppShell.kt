@@ -298,7 +298,9 @@ fun ElajxAppShell(
                         )
                         NavDestination.Prescriptions -> PrescriptionScreen()
                         NavDestination.Orders -> OrdersScreen(
-                            onNavigateToHome = { viewModel.selectTab(NavDestination.Home) }
+                            viewModel = viewModel.ordersViewModel,
+                            onNavigateToHome = { viewModel.selectTab(NavDestination.Home) },
+                            onRequireAuth = { viewModel.openAuthDialog() }
                         )
                         NavDestination.Account -> AccountScreen(
                             session = uiState.session,

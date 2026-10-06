@@ -1396,6 +1396,290 @@ class ExampleRobolectricTest {
         assertEquals("Both concurrent submissions MUST resolve to the identical order number", order1, order2)
         assertEquals("Inventory reservation MUST be performed exactly once", 1, reservations.get())
     }
+
+    // ==========================================
+    // Phase 5: Orders Domain Tests (History, Status Timeline & Details)
+    // ==========================================
+
+    @Test
+    fun orderRepository_getOrders_requiresAuthentication() = runBlocking {
+        val repo = com.example.data.repository.OrderRepositoryImpl()
+        val result = repo.getOrders("")
+        assertTrue("Empty user token must return AuthenticationError", result is AppResult.Error)
+        val error = (result as AppResult.Error).error
+        assertTrue(error is AppError.AuthenticationError)
+    }
+
+    @Test
+    fun orderRepository_getOrders_mapsAuthoritativePayloadSafely() = runBlocking {
+        val mockOrdersList = listOf(
+            com.example.data.remote.model.OrderResponseDto(
+                id = "ord-001",
+                publicOrderNumber = "ELAJX-A1B2C3D4",
+                status = "PLACED",
+                subtotal = 120.0,
+                deliveryFee = 16.50,
+                discount = 0.0,
+                total = 136.50,
+                paymentMethod = "CASH_ON_DELIVERY",
+                paymentStatus = "PENDING",
+                createdAt = "2026-10-06T10:00:00Z"
+            ),
+            com.example.data.remote.model.OrderResponseDto(
+                id = "ord-002",
+                publicOrderNumber = "ELAJX-E5F6G7H8",
+                status = "DELIVERED",
+                subtotal = 50.0,
+                deliveryFee = 16.50,
+                discount = 0.0,
+                total = 66.50,
+                paymentMethod = "CASH_ON_DELIVERY",
+                paymentStatus = "PAID",
+                createdAt = "2026-10-05T09:00:00Z"
+            )
+        )
+
+        val mockClient = object : com.example.data.remote.SupabaseOrderClient {
+            override suspend fun createOrder(baseUrl: String, headers: Map<String, String>, request: com.example.data.remote.model.CreateOrderRpcRequest) =
+                AppResult.Error(AppError.UnknownError(null))
+            override suspend fun getUserAddresses(baseUrl: String, headers: Map<String, String>) =
+                AppResult.Success(emptyList<com.example.data.remote.model.AddressDto>())
+            override suspend fun createAddress(baseUrl: String, headers: Map<String, String>, request: com.example.data.remote.model.CreateAddressRequestDto) =
+                AppResult.Error(AppError.UnknownError(null))
+            override suspend fun getUserOrders(baseUrl: String, headers: Map<String, String>) =
+                AppResult.Success(mockOrdersList)
+            override suspend fun getOrderItems(baseUrl: String, headers: Map<String, String>, orderId: String) =
+                AppResult.Success(emptyList<com.example.data.remote.model.OrderItemDto>())
+            override suspend fun getOrderStatusHistory(baseUrl: String, headers: Map<String, String>, orderId: String) =
+                AppResult.Success(emptyList<com.example.data.remote.model.OrderStatusHistoryDto>())
+        }
+
+        val repo = com.example.data.repository.OrderRepositoryImpl(orderClient = mockClient)
+        val result = repo.getOrders("valid_token")
+        assertTrue(result is AppResult.Success)
+        val orders = (result as AppResult.Success).data
+        assertEquals(2, orders.size)
+        assertEquals("ELAJX-A1B2C3D4", orders[0].publicOrderNumber)
+        assertEquals("PLACED", orders[0].status)
+        assertEquals(136.50, orders[0].total, 0.001)
+        assertEquals("DELIVERED", orders[1].status)
+    }
+
+    @Test
+    fun orderRepository_getOrderDetails_fetchesItemsAndStatusTimeline() = runBlocking {
+        val mockOrder = com.example.data.remote.model.OrderResponseDto(
+            id = "ord-detail-1",
+            publicOrderNumber = "ELAJX-DET01",
+            status = "OUT_FOR_DELIVERY",
+            subtotal = 90.0,
+            deliveryFee = 16.50,
+            discount = 0.0,
+            total = 106.50,
+            paymentMethod = "CASH_ON_DELIVERY",
+            paymentStatus = "PENDING",
+            createdAt = "2026-10-06T11:00:00Z"
+        )
+        val mockItems = listOf(
+            com.example.data.remote.model.OrderItemDto(
+                id = "item-1",
+                orderId = "ord-detail-1",
+                medicineVariantId = "var-1",
+                medicineNameSnapshot = "Panadol Blue 24s",
+                quantity = 2,
+                unitPrice = 45.0,
+                lineTotal = 90.0,
+                sourcePharmacyId = "pharm-1"
+            )
+        )
+        val mockHistory = listOf(
+            com.example.data.remote.model.OrderStatusHistoryDto(
+                id = "hist-1",
+                orderId = "ord-detail-1",
+                fromStatus = null,
+                toStatus = "PLACED",
+                actorType = "PATIENT",
+                note = "Order submitted",
+                createdAt = "2026-10-06T11:00:00Z"
+            ),
+            com.example.data.remote.model.OrderStatusHistoryDto(
+                id = "hist-2",
+                orderId = "ord-detail-1",
+                fromStatus = "PLACED",
+                toStatus = "CONFIRMED",
+                actorType = "PHARMACY",
+                note = "Pharmacy confirmed order",
+                createdAt = "2026-10-06T11:05:00Z"
+            ),
+            com.example.data.remote.model.OrderStatusHistoryDto(
+                id = "hist-3",
+                orderId = "ord-detail-1",
+                fromStatus = "CONFIRMED",
+                toStatus = "OUT_FOR_DELIVERY",
+                actorType = "DELIVERY",
+                note = "Courier dispatched",
+                createdAt = "2026-10-06T11:20:00Z"
+            )
+        )
+
+        val mockClient = object : com.example.data.remote.SupabaseOrderClient {
+            override suspend fun createOrder(baseUrl: String, headers: Map<String, String>, request: com.example.data.remote.model.CreateOrderRpcRequest) =
+                AppResult.Error(AppError.UnknownError(null))
+            override suspend fun getUserAddresses(baseUrl: String, headers: Map<String, String>) =
+                AppResult.Success(emptyList<com.example.data.remote.model.AddressDto>())
+            override suspend fun createAddress(baseUrl: String, headers: Map<String, String>, request: com.example.data.remote.model.CreateAddressRequestDto) =
+                AppResult.Error(AppError.UnknownError(null))
+            override suspend fun getUserOrders(baseUrl: String, headers: Map<String, String>) =
+                AppResult.Success(listOf(mockOrder))
+            override suspend fun getOrderItems(baseUrl: String, headers: Map<String, String>, orderId: String) =
+                AppResult.Success(mockItems)
+            override suspend fun getOrderStatusHistory(baseUrl: String, headers: Map<String, String>, orderId: String) =
+                AppResult.Success(mockHistory)
+        }
+
+        val repo = com.example.data.repository.OrderRepositoryImpl(orderClient = mockClient)
+        val result = repo.getOrderDetails("valid_token", "ord-detail-1")
+        assertTrue(result is AppResult.Success)
+        val detail = (result as AppResult.Success).data
+        assertEquals("ELAJX-DET01", detail.order.publicOrderNumber)
+        assertEquals(1, detail.items.size)
+        assertEquals("Panadol Blue 24s", detail.items[0].medicineNameSnapshot)
+        assertEquals(3, detail.statusHistory.size)
+        assertEquals("PLACED", detail.statusHistory[0].toStatus)
+        assertEquals("CONFIRMED", detail.statusHistory[1].toStatus)
+        assertEquals("OUT_FOR_DELIVERY", detail.statusHistory[2].toStatus)
+    }
+
+    @Test
+    fun ordersViewModel_unauthenticated_displaysAuthPrompt() {
+        val storage = InMemoryAuthSessionStorage() // No session
+        val mockRepo = object : com.example.domain.repository.OrderRepository {
+            override suspend fun getAddresses(userToken: String) = AppResult.Success(emptyList<com.example.domain.model.Address>())
+            override suspend fun createAddress(userToken: String, label: String, governorate: String, city: String, area: String, street: String, building: String, apartment: String?, floor: String?, landmark: String?, isDefault: Boolean) = AppResult.Error(AppError.UnknownError(null))
+            override suspend fun submitOrder(userToken: String, addressId: String, pharmacyId: String, items: List<Pair<String, Int>>, paymentMethod: String, idempotencyKey: String) = AppResult.Error(AppError.UnknownError(null))
+            override suspend fun getOrders(userToken: String) = AppResult.Error(AppError.AuthenticationError("Auth required"))
+            override suspend fun getOrderDetails(userToken: String, orderId: String) = AppResult.Error(AppError.AuthenticationError("Auth required"))
+        }
+
+        val viewModel = com.example.presentation.screens.orders.OrdersViewModel(
+            orderRepository = mockRepo,
+            sessionStorage = storage,
+            dispatcher = kotlinx.coroutines.Dispatchers.Unconfined
+        )
+
+        assertEquals(com.example.presentation.screens.orders.OrdersUiState.Unauthenticated, viewModel.uiState.value)
+    }
+
+    @Test
+    fun ordersViewModel_emptyOrders_transitionsToTruthfulEmptyState() {
+        val storage = InMemoryAuthSessionStorage()
+        storage.saveSession("token", "ref", "u1", "01012345678", "مريض")
+        val mockRepo = object : com.example.domain.repository.OrderRepository {
+            override suspend fun getAddresses(userToken: String) = AppResult.Success(emptyList<com.example.domain.model.Address>())
+            override suspend fun createAddress(userToken: String, label: String, governorate: String, city: String, area: String, street: String, building: String, apartment: String?, floor: String?, landmark: String?, isDefault: Boolean) = AppResult.Error(AppError.UnknownError(null))
+            override suspend fun submitOrder(userToken: String, addressId: String, pharmacyId: String, items: List<Pair<String, Int>>, paymentMethod: String, idempotencyKey: String) = AppResult.Error(AppError.UnknownError(null))
+            override suspend fun getOrders(userToken: String) = AppResult.Success(emptyList<com.example.domain.model.Order>())
+            override suspend fun getOrderDetails(userToken: String, orderId: String) = AppResult.Error(AppError.NotFoundError("No order"))
+        }
+
+        val viewModel = com.example.presentation.screens.orders.OrdersViewModel(
+            orderRepository = mockRepo,
+            sessionStorage = storage,
+            dispatcher = kotlinx.coroutines.Dispatchers.Unconfined
+        )
+
+        assertEquals(com.example.presentation.screens.orders.OrdersUiState.Empty, viewModel.uiState.value)
+    }
+
+    @Test
+    fun ordersViewModel_partitionsActiveAndPastOrdersCorrectly() {
+        val storage = InMemoryAuthSessionStorage()
+        storage.saveSession("token", "ref", "u1", "01012345678", "مريض")
+
+        val ordersList = listOf(
+            com.example.domain.model.Order("1", "ELAJX-1", "PLACED", 50.0, 16.5, 0.0, 66.5, "CASH_ON_DELIVERY", "PENDING", "2026-10-06T10:00:00Z"),
+            com.example.domain.model.Order("2", "ELAJX-2", "PREPARING", 70.0, 16.5, 0.0, 86.5, "CASH_ON_DELIVERY", "PENDING", "2026-10-06T09:00:00Z"),
+            com.example.domain.model.Order("3", "ELAJX-3", "OUT_FOR_DELIVERY", 90.0, 16.5, 0.0, 106.5, "CASH_ON_DELIVERY", "PENDING", "2026-10-06T08:00:00Z"),
+            com.example.domain.model.Order("4", "ELAJX-4", "DELIVERED", 40.0, 16.5, 0.0, 56.5, "CASH_ON_DELIVERY", "PAID", "2026-10-05T12:00:00Z"),
+            com.example.domain.model.Order("5", "ELAJX-5", "CANCELLED", 30.0, 16.5, 0.0, 46.5, "CASH_ON_DELIVERY", "FAILED", "2026-10-04T12:00:00Z"),
+            com.example.domain.model.Order("6", "ELAJX-6", "FAILED", 20.0, 16.5, 0.0, 36.5, "CASH_ON_DELIVERY", "FAILED", "2026-10-03T12:00:00Z")
+        )
+
+        val mockRepo = object : com.example.domain.repository.OrderRepository {
+            override suspend fun getAddresses(userToken: String) = AppResult.Success(emptyList<com.example.domain.model.Address>())
+            override suspend fun createAddress(userToken: String, label: String, governorate: String, city: String, area: String, street: String, building: String, apartment: String?, floor: String?, landmark: String?, isDefault: Boolean) = AppResult.Error(AppError.UnknownError(null))
+            override suspend fun submitOrder(userToken: String, addressId: String, pharmacyId: String, items: List<Pair<String, Int>>, paymentMethod: String, idempotencyKey: String) = AppResult.Error(AppError.UnknownError(null))
+            override suspend fun getOrders(userToken: String) = AppResult.Success(ordersList)
+            override suspend fun getOrderDetails(userToken: String, orderId: String) = AppResult.Error(AppError.NotFoundError("No order"))
+        }
+
+        val viewModel = com.example.presentation.screens.orders.OrdersViewModel(
+            orderRepository = mockRepo,
+            sessionStorage = storage,
+            dispatcher = kotlinx.coroutines.Dispatchers.Unconfined
+        )
+
+        assertTrue(viewModel.uiState.value is com.example.presentation.screens.orders.OrdersUiState.Success)
+        val state = viewModel.uiState.value as com.example.presentation.screens.orders.OrdersUiState.Success
+        assertEquals(3, state.activeOrders.size)
+        assertEquals(listOf("PLACED", "PREPARING", "OUT_FOR_DELIVERY"), state.activeOrders.map { it.status })
+        assertEquals(3, state.pastOrders.size)
+        assertEquals(listOf("DELIVERED", "CANCELLED", "FAILED"), state.pastOrders.map { it.status })
+    }
+
+    @Test
+    fun ordersViewModel_errorAndRetry_transitionsStatesCorrectly() {
+        val storage = InMemoryAuthSessionStorage()
+        storage.saveSession("token", "ref", "u1", "01012345678", "مريض")
+
+        var attempt = 0
+        val mockRepo = object : com.example.domain.repository.OrderRepository {
+            override suspend fun getAddresses(userToken: String) = AppResult.Success(emptyList<com.example.domain.model.Address>())
+            override suspend fun createAddress(userToken: String, label: String, governorate: String, city: String, area: String, street: String, building: String, apartment: String?, floor: String?, landmark: String?, isDefault: Boolean) = AppResult.Error(AppError.UnknownError(null))
+            override suspend fun submitOrder(userToken: String, addressId: String, pharmacyId: String, items: List<Pair<String, Int>>, paymentMethod: String, idempotencyKey: String) = AppResult.Error(AppError.UnknownError(null))
+            override suspend fun getOrders(userToken: String): AppResult<List<com.example.domain.model.Order>> {
+                attempt++
+                return if (attempt == 1) {
+                    AppResult.Error(AppError.NetworkError("Network timeout"))
+                } else {
+                    AppResult.Success(listOf(com.example.domain.model.Order("1", "ELAJX-RETRY", "PLACED", 50.0, 16.5, 0.0, 66.5, "CASH_ON_DELIVERY", "PENDING", "2026-10-06T10:00:00Z")))
+                }
+            }
+            override suspend fun getOrderDetails(userToken: String, orderId: String) = AppResult.Error(AppError.NotFoundError("No order"))
+        }
+
+        val viewModel = com.example.presentation.screens.orders.OrdersViewModel(
+            orderRepository = mockRepo,
+            sessionStorage = storage,
+            dispatcher = kotlinx.coroutines.Dispatchers.Unconfined
+        )
+
+        // Attempt 1 fails
+        assertTrue(viewModel.uiState.value is com.example.presentation.screens.orders.OrdersUiState.Error)
+
+        // Retry (Attempt 2) succeeds
+        viewModel.loadOrders()
+        assertTrue(viewModel.uiState.value is com.example.presentation.screens.orders.OrdersUiState.Success)
+        val state = viewModel.uiState.value as com.example.presentation.screens.orders.OrdersUiState.Success
+        assertEquals(1, state.activeOrders.size)
+        assertEquals("ELAJX-RETRY", state.activeOrders[0].publicOrderNumber)
+    }
+
+    @Test
+    fun ordersTimeline_canonicalProgressionAndTerminalPartition() {
+        // Active states (01_PRODUCT_SPEC.md §7)
+        assertTrue(com.example.presentation.screens.orders.OrdersViewModel.isActiveStatus("PLACED"))
+        assertTrue(com.example.presentation.screens.orders.OrdersViewModel.isActiveStatus("CONFIRMED"))
+        assertTrue(com.example.presentation.screens.orders.OrdersViewModel.isActiveStatus("PREPARING"))
+        assertTrue(com.example.presentation.screens.orders.OrdersViewModel.isActiveStatus("READY_FOR_PICKUP"))
+        assertTrue(com.example.presentation.screens.orders.OrdersViewModel.isActiveStatus("PICKED_UP"))
+        assertTrue(com.example.presentation.screens.orders.OrdersViewModel.isActiveStatus("OUT_FOR_DELIVERY"))
+
+        // Terminal states
+        assertFalse(com.example.presentation.screens.orders.OrdersViewModel.isActiveStatus("DELIVERED"))
+        assertFalse(com.example.presentation.screens.orders.OrdersViewModel.isActiveStatus("CANCELLED"))
+        assertFalse(com.example.presentation.screens.orders.OrdersViewModel.isActiveStatus("FAILED"))
+        assertFalse(com.example.presentation.screens.orders.OrdersViewModel.isActiveStatus("UNKNOWN_STATUS"))
+    }
 }
 
 

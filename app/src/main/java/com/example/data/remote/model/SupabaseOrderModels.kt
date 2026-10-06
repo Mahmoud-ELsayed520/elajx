@@ -2,6 +2,8 @@ package com.example.data.remote.model
 
 import com.example.domain.model.Address
 import com.example.domain.model.Order
+import com.example.domain.model.OrderItem
+import com.example.domain.model.OrderStatusHistory
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -95,3 +97,53 @@ data class CreateAddressRequestDto(
     @Json(name = "landmark") val landmark: String? = null,
     @Json(name = "is_default") val isDefault: Boolean = false
 )
+
+@JsonClass(generateAdapter = true)
+data class OrderItemDto(
+    @Json(name = "id") val id: String,
+    @Json(name = "order_id") val orderId: String,
+    @Json(name = "medicine_variant_id") val medicineVariantId: String,
+    @Json(name = "medicine_name_snapshot") val medicineNameSnapshot: String,
+    @Json(name = "quantity") val quantity: Int,
+    @Json(name = "unit_price") val unitPrice: Double,
+    @Json(name = "line_total") val lineTotal: Double,
+    @Json(name = "source_pharmacy_id") val sourcePharmacyId: String
+) {
+    fun toDomain(): OrderItem {
+        return OrderItem(
+            id = id,
+            orderId = orderId,
+            medicineVariantId = medicineVariantId,
+            medicineNameSnapshot = medicineNameSnapshot,
+            quantity = quantity,
+            unitPrice = unitPrice,
+            lineTotal = lineTotal,
+            sourcePharmacyId = sourcePharmacyId
+        )
+    }
+}
+
+@JsonClass(generateAdapter = true)
+data class OrderStatusHistoryDto(
+    @Json(name = "id") val id: String,
+    @Json(name = "order_id") val orderId: String,
+    @Json(name = "from_status") val fromStatus: String? = null,
+    @Json(name = "to_status") val toStatus: String,
+    @Json(name = "actor_type") val actorType: String,
+    @Json(name = "actor_id") val actorId: String? = null,
+    @Json(name = "note") val note: String? = null,
+    @Json(name = "created_at") val createdAt: String
+) {
+    fun toDomain(): OrderStatusHistory {
+        return OrderStatusHistory(
+            id = id,
+            orderId = orderId,
+            fromStatus = fromStatus,
+            toStatus = toStatus,
+            actorType = actorType,
+            actorId = actorId,
+            note = note,
+            createdAt = createdAt
+        )
+    }
+}

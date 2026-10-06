@@ -3,6 +3,7 @@ package com.example.domain.repository
 import com.example.core.result.AppResult
 import com.example.domain.model.Address
 import com.example.domain.model.Order
+import com.example.domain.model.OrderDetail
 
 /**
  * Contract for executing authoritative order operations and address management.
@@ -32,4 +33,9 @@ interface OrderRepository {
         paymentMethod: String = "CASH_ON_DELIVERY",
         idempotencyKey: String
     ): AppResult<Order>
+
+    suspend fun getOrders(userToken: String): AppResult<List<Order>> = AppResult.Success(emptyList())
+
+    suspend fun getOrderDetails(userToken: String, orderId: String): AppResult<OrderDetail> =
+        AppResult.Error(com.example.core.result.AppError.NotFoundError("Order not found"))
 }

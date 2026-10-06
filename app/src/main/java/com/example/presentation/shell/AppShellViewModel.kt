@@ -18,6 +18,7 @@ import com.example.presentation.auth.AuthViewModel
 import com.example.presentation.navigation.NavDestination
 import com.example.presentation.screens.cart.CartViewModel
 import com.example.presentation.screens.checkout.CheckoutViewModel
+import com.example.presentation.screens.orders.OrdersViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -53,6 +54,10 @@ class AppShellViewModel(
         cartRepository = cartRepository,
         sessionStorage = authRepository.sessionStorage
     )
+    val ordersViewModel = OrdersViewModel(
+        orderRepository = orderRepository,
+        sessionStorage = authRepository.sessionStorage
+    )
 
     private val _uiState = MutableStateFlow(
         AppShellUiState(
@@ -75,6 +80,9 @@ class AppShellViewModel(
                 _uiState.update { it.copy(session = session) }
                 if (session is AuthSession.Authenticated) {
                     checkoutViewModel.onSessionRestored()
+                    ordersViewModel.loadOrders()
+                } else {
+                    ordersViewModel.loadOrders()
                 }
             }
         }
@@ -90,6 +98,9 @@ class AppShellViewModel(
 
     fun selectTab(tab: NavDestination) {
         SecureLogger.d(tag, "Navigating to tab: ${tab.route}")
+        if (tab == NavDestination.Orders) {
+            ordersViewModel.loadOrders()
+        }
         _uiState.update {
             it.copy(
                 currentTab = tab,
@@ -156,6 +167,9 @@ class AppShellViewModel(
 
     fun closeOrderConfirmation(goToOrders: Boolean = false) {
         checkoutViewModel.resetIdempotencyKey()
+        if (goToOrders) {
+            ordersViewModel.loadOrders()
+        }
         _uiState.update {
             it.copy(
                 confirmedOrder = null,

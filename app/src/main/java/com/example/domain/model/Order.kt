@@ -30,3 +30,26 @@ data class OrderItem(
     val lineTotal: Double,
     val sourcePharmacyId: String
 )
+
+/**
+ * Historical status transition entry associated with an order (04_DATA_MODEL.md §14).
+ */
+data class OrderStatusHistory(
+    val id: String,
+    val orderId: String,
+    val fromStatus: String?,
+    val toStatus: String,
+    val actorType: String,
+    val actorId: String? = null,
+    val note: String? = null,
+    val createdAt: String
+)
+
+/**
+ * Full details of an order including its line items and status transition timeline.
+ */
+data class OrderDetail(
+    val order: Order,
+    val items: List<OrderItem> = emptyList(),
+    val statusHistory: List<OrderStatusHistory> = emptyList()
+)

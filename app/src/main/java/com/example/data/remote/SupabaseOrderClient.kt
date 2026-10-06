@@ -6,7 +6,9 @@ import com.example.core.security.SecureLogger
 import com.example.data.remote.model.AddressDto
 import com.example.data.remote.model.CreateAddressRequestDto
 import com.example.data.remote.model.CreateOrderRpcRequest
+import com.example.data.remote.model.OrderItemDto
 import com.example.data.remote.model.OrderResponseDto
+import com.example.data.remote.model.OrderStatusHistoryDto
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -36,6 +38,23 @@ interface SupabaseOrderClient {
         headers: Map<String, String>,
         request: CreateAddressRequestDto
     ): AppResult<AddressDto>
+
+    suspend fun getUserOrders(
+        baseUrl: String,
+        headers: Map<String, String>
+    ): AppResult<List<OrderResponseDto>>
+
+    suspend fun getOrderItems(
+        baseUrl: String,
+        headers: Map<String, String>,
+        orderId: String
+    ): AppResult<List<OrderItemDto>>
+
+    suspend fun getOrderStatusHistory(
+        baseUrl: String,
+        headers: Map<String, String>,
+        orderId: String
+    ): AppResult<List<OrderStatusHistoryDto>>
 }
 
 class RealSupabaseOrderClient(
@@ -54,6 +73,15 @@ class RealSupabaseOrderClient(
 
     private val createOrderRequestAdapter = moshi.adapter(CreateOrderRpcRequest::class.java)
     private val orderResponseAdapter = moshi.adapter(OrderResponseDto::class.java)
+    private val orderListResponseAdapter = moshi.adapter<List<OrderResponseDto>>(
+        Types.newParameterizedType(List::class.java, OrderResponseDto::class.java)
+    )
+    private val orderItemListAdapter = moshi.adapter<List<OrderItemDto>>(
+        Types.newParameterizedType(List::class.java, OrderItemDto::class.java)
+    )
+    private val orderStatusHistoryListAdapter = moshi.adapter<List<OrderStatusHistoryDto>>(
+        Types.newParameterizedType(List::class.java, OrderStatusHistoryDto::class.java)
+    )
     private val addressListAdapter = moshi.adapter<List<AddressDto>>(
         Types.newParameterizedType(List::class.java, AddressDto::class.java)
     )
@@ -164,6 +192,83 @@ class RealSupabaseOrderClient(
             }
         } catch (e: IOException) {
             AppResult.Error(AppError.NetworkError("Network connection failed saving address."))
+        } catch (e: Exception) {
+            AppResult.Error(AppError.UnknownError(e))
+        }
+    }
+
+    override suspend fun getUserOrders(
+        baseUrl: String,
+        headers: Map<String, String>
+    ): AppResult<List<OrderResponseDto>> = withContext(Dispatchers.IO) {
+        val url = baseUrl.trimEnd('/') + "/rest/v1/orders?select=*&order=created_at.desc"
+        val requestBuilder = Request.Builder().url(url).get()
+        headers.forEach { (key, value) -> requestBuilder.header(key, value) }
+
+        try {
+            httpClient.newCall(requestBuilder.build()).execute().use { response ->
+                val responseBody = response.body?.string().orEmpty()
+                if (response.isSuccessful) {
+                    val orders = orderListResponseAdapter.fromJson(responseBody) ?: emptyList()
+                    AppResult.Success(orders)
+                } else {
+                    handleHttpError(response.code, responseBody)
+                }
+            }
+        } catch (e: IOException) {
+            AppResult.Error(AppError.NetworkError("Network connection failed fetching orders."))
+        } catch (e: Exception) {
+            AppResult.Error(AppError.UnknownError(e))
+        }
+    }
+
+    override suspend fun getOrderItems(
+        baseUrl: String,
+        headers: Map<String, String>,
+        orderId: String
+    ): AppResult<List<OrderItemDto>> = withContext(Dispatchers.IO) {
+        val url = baseUrl.trimEnd('/') + "/rest/v1/order_items?order_id=eq.$orderId&select=*"
+        val requestBuilder = Request.Builder().url(url).get()
+        headers.forEach { (key, value) -> requestBuilder.header(key, value) }
+
+        try {
+            httpClient.newCall(requestBuilder.build()).execute().use { response ->
+                val responseBody = response.body?.string().orEmpty()
+                if (response.isSuccessful) {
+                    val items = orderItemListAdapter.fromJson(responseBody) ?: emptyList()
+                    AppResult.Success(items)
+                } else {
+                    handleHttpError(response.code, responseBody)
+                }
+            }
+        } catch (e: IOException) {
+            AppResult.Error(AppError.NetworkError("Network connection failed fetching order items."))
+        } catch (e: Exception) {
+            AppResult.Error(AppError.UnknownError(e))
+        }
+    }
+
+    override suspend fun getOrderStatusHistory(
+        baseUrl: String,
+        headers: Map<String, String>,
+        orderId: String
+    ): AppResult<List<OrderStatusHistoryDto>> = withContext(Dispatchers.IO) {
+        val url = baseUrl.trimEnd('/') + "/rest/v1/order_status_history?order_id=eq.$orderId&select=*&order=created_at.asc"
+        val requestBuilder = Request.Builder().url(url).get()
+        headers.forEach { (key, value) -> requestBuilder.header(key, value) }
+
+        try {
+            httpClient.newCall(requestBuilder.build()).execute().use { response ->
+                val responseBody = response.body?.string().orEmpty()
+                if (response.isSuccessful) {
+                    val history = orderStatusHistoryListAdapter.fromJson(responseBody) ?: emptyList()
+                    AppResult.Success(history)
+                } else {
+                    handleHttpError(response.code, responseBody)
+                }
+            }
+        } catch (e: IOException) {
+            AppResult.Error(AppError.NetworkError("Network connection failed fetching order status history."))
         } catch (e: Exception) {
             AppResult.Error(AppError.UnknownError(e))
         }

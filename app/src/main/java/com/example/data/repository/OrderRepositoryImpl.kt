@@ -12,6 +12,7 @@ import com.example.data.remote.model.CreateOrderRpcItem
 import com.example.data.remote.model.CreateOrderRpcRequest
 import com.example.domain.model.Address
 import com.example.domain.model.Order
+import com.example.domain.model.OrderDetail
 import com.example.domain.repository.OrderRepository
 
 class OrderRepositoryImpl(
@@ -118,5 +119,52 @@ class OrderRepositoryImpl(
                 result
             }
         }
+    }
+
+    override suspend fun getOrders(userToken: String): AppResult<List<Order>> {
+        if (userToken.isBlank()) {
+            return AppResult.Error(AppError.AuthenticationError("Authentication required to fetch orders"))
+        }
+        val headers = supabaseBoundary.getClientSafeHeaders(userToken = userToken)
+        SecureLogger.i(tag, "Fetching orders for authenticated patient")
+        return when (val result = orderClient.getUserOrders(config.supabaseUrl, headers)) {
+            is AppResult.Success -> AppResult.Success(result.data.map { it.toDomain() })
+            is AppResult.Error -> result
+        }
+    }
+
+    override suspend fun getOrderDetails(userToken: String, orderId: String): AppResult<OrderDetail> {
+        if (userToken.isBlank()) {
+            return AppResult.Error(AppError.AuthenticationError("Authentication required to fetch order details"))
+        }
+        if (orderId.isBlank()) {
+            return AppResult.Error(AppError.ValidationError("Order ID is required", "orderId"))
+        }
+        val headers = supabaseBoundary.getClientSafeHeaders(userToken = userToken)
+        SecureLogger.i(tag, "Fetching order details for order ID: $orderId")
+
+        // First find the order
+        val ordersResult = orderClient.getUserOrders(config.supabaseUrl, headers)
+        if (ordersResult is AppResult.Error) {
+            return ordersResult
+        }
+        val order = (ordersResult as AppResult.Success).data.find { it.id == orderId }?.toDomain()
+            ?: return AppResult.Error(AppError.NotFoundError("Order not found or unauthorized"))
+
+        // Fetch line items
+        val itemsResult = orderClient.getOrderItems(config.supabaseUrl, headers, orderId)
+        val items = if (itemsResult is AppResult.Success) itemsResult.data.map { it.toDomain() } else emptyList()
+
+        // Fetch status history
+        val historyResult = orderClient.getOrderStatusHistory(config.supabaseUrl, headers, orderId)
+        val history = if (historyResult is AppResult.Success) historyResult.data.map { it.toDomain() } else emptyList()
+
+        return AppResult.Success(
+            OrderDetail(
+                order = order,
+                items = items,
+                statusHistory = history
+            )
+        )
     }
 }
