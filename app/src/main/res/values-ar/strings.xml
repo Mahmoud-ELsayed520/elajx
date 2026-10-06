@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">عِلاجِك</string>
+    <string name="app_name_ar">عِلاجِك</string>
+    <string name="app_tagline">العثور على دوائك بسهولة وموثوقية ودون عناء البحث</string>
+    
+    <!-- Bootstrap Screen -->
+    <string name="bootstrap_title">البنية الأساسية لمنظومة عِلاجِك</string>
+    <string name="bootstrap_subtitle">التحقق من الهيكلية البرمجية والأمان والعقود التقنية</string>
+    <string name="env_label">بيئة العمل</string>
+    <string name="env_dev">بيئة التطوير (Development)</string>
+    <string name="env_staging">بيئة الاختبار (Staging)</string>
+    <string name="env_prod">بيئة الإنتاج (Production)</string>
+    <string name="status_verified">مُحقق ومكتمل البنية</string>
+    <string name="status_unbuilt">قيد التحديد / مؤجل للمرحلة القادمة</string>
+    
+    <!-- Architectural Boundaries -->
+    <string name="boundary_architecture">الهندسة النظيفة (Presentation / Domain / Data)</string>
+    <string name="boundary_supabase">واجهة سوبابيز الآمنة (العميل غير موثوق به)</string>
+    <string name="boundary_security">الأمان: لا مفاتيح سرية في التطبيق، والتحكم بالخادم</string>
+    <string name="boundary_auth">إدارة الجلسات (منع إنشاء الطلبات لغير المسجلين)</string>
+    <string name="boundary_ai">حدود الذكاء الاصطناعي: مساعد فقط وغير ملزم طبياً</string>
+    <string name="boundary_rtl">دعم أصيل للغة العربية من اليمين لليسار وإمكانية الوصول</string>
+    
+    <!-- Session State -->
+    <string name="auth_state_title">حالة تسجيل الدخول</string>
+    <string name="auth_state_unauthenticated">غير مسجل (التصفح متاح — إنشاء الطلبات مقفل)</string>
+    <string name="auth_state_authenticated">مستخدم مسجل ومعتمد</string>
+    <string name="auth_state_loading">جارٍ التحقق من الجلسة...</string>
+    <string name="auth_state_expired">انتهت صلاحية الجلسة</string>
+    
+    <!-- Actions -->
+    <string name="btn_reverify">إعادة فحص البنية الأساسية</string>
+    <string name="btn_toggle_auth">محاكاة تبديل حالة الحساب</string>
+    
+    <!-- Navigation Tabs -->
+    <string name="tab_home">الرئيسية</string>
+    <string name="tab_search">البحث</string>
+    <string name="tab_prescriptions">الروشتة</string>
+    <string name="tab_orders">الطلبات</string>
+    <string name="tab_account">الحساب</string>
+    
+    <!-- Common UI States -->
+    <string name="empty_state_title">لا توجد عناصر بعد</string>
+    <string name="empty_state_desc">ستظهر البيانات هنا فور المزامنة مع الخادم.</string>
+    <string name="error_state_title">تعذر إتمام العملية</string>
+    <string name="error_state_desc">يرجى التحقق من الاتصال بالشبكة والمحاولة مرة أخرى.</string>
+    <string name="retry_action">إعادة المحاولة</string>
+    <string name="loading_label">جارٍ التحميل...</string>
+
+    <!-- Phase 1: App Shell & Core Screen Inventory -->
+    <!-- Home Screen -->
+    <string name="home_greeting">مرحباً بك في عِلاجِك</string>
+    <string name="home_location_prefix">التوصيل إلى:</string>
+    <string name="home_location_default">القاهرة، مصر</string>
+    <string name="home_search_placeholder">ابحث عن دواء أو مادة فعالة...</string>
+    <string name="home_prescription_banner_title">معاك روشتة علاج؟</string>
+    <string name="home_prescription_banner_desc">افحصها لمعرفة توافر الأدوية في الصيدليات الشريكة القريبة منك</string>
+    <string name="home_prescription_banner_cta">فحص الروشتة</string>
+    <string name="home_quick_actions">الوصول السريع</string>
+    <string name="home_action_search">بحث عن دواء</string>
+    <string name="home_action_scan">فحص روشتة</string>
+    <string name="home_action_orders">طلباتي</string>
+    <string name="home_action_baseline">فحص المنظومة</string>
+    <string name="home_nearby_title">توافر الأدوية بالقرب منك</string>
+    <string name="home_nearby_empty_title">لم يتم ربط الصيدليات المعتمدة بعد</string>
+    <string name="home_nearby_empty_desc">سيتم ربط المزامنة الحية لمخزون الصيدليات الشريكة في المرحلة الثالثة.</string>
+
+    <!-- Search Screen -->
+    <string name="search_title">البحث عن الأدوية</string>
+    <string name="search_input_hint">ابحث باسم الدواء التجاري أو المادة الفعالة أو التركيز</string>
+    <string name="search_empty_prompt">اكتب اسم الدواء للبدء</string>
+    <string name="search_phase_note">سيتم ربط الفهرس الدوائي المعتمد في المرحلة الثالثة.</string>
+
+    <!-- Prescription Screen -->
+    <string name="prescription_title">فحص الروشتة</string>
+    <string name="prescription_intro_title">المساعدة الذكية في قراءة الروشتة</string>
+    <string name="prescription_intro_desc">يساعدك عِلاجِك في استخراج أسماء الأدوية من الروشتة. يجب عليك دائماً مراجعة وتأكيد كل دواء مقترح قبل الطلب.</string>
+    <string name="prescription_disclaimer">مبدأ السلامة: الذكاء الاصطناعي أداة مساعدة فقط وليس طبيباً أو صيدلياً، ولا يقوم بالتشخيص أو وصف العلاج أو الاستبدال التلقائي.</string>
+    <string name="prescription_empty_title">لم تفحص روشتة بعد</string>
+    <string name="prescription_empty_desc">ارفع أو التقط صورة الروشتة لبدء عملية استخراج الأدوية ومراجعتها.</string>
+    <string name="prescription_cta">رفع أو تصوير الروشتة (المرحلة 6)</string>
+
+    <!-- Orders Screen -->
+    <string name="orders_title">سجل الطلبات</string>
+    <string name="orders_empty_title">لا توجد طلبات حتى الآن</string>
+    <string name="orders_empty_desc">ستظهر طلبات الأدوية الحالية وتاريخ طلباتك السابقة هنا بعد إتمام الطلب.</string>
+
+    <!-- Account Screen -->
+    <string name="account_title">الحساب والمنظومة</string>
+    <string name="account_profile_title">ملف المريض</string>
+    <string name="account_guest_title">وضع التصفح (زائر)</string>
+    <string name="account_guest_desc">تصفح الفهرس متاح للجميع. يتطلب إنشاء الطلبات وحفظ الروشتات تسجيل الدخول برقم الهاتف.</string>
+    <string name="account_auth_desc">حساب مريض موثق. إمكانية إنشاء الطلبات وحفظ الروشتات مفعلة.</string>
+    <string name="account_system_info">معلومات النظام والهندسة التقنية</string>
+    <string name="account_privacy_title">الخصوصية وحماية البيانات</string>
+    <string name="account_privacy_desc">متوافق مع قانون حماية البيانات الشخصية المصري رقم 151 لسنة 2020. تُحفظ الروشتات في خزائن سحابية خاصة بدون مفاتيح سرية بالعميل.</string>
+    <string name="account_view_baseline">عرض تقرير التحقق من البنية الأساسية</string>
+    <string name="back_to_home">العودة للرئيسية</string>
+    <!-- Phase 2: Authentication & Patient Session -->
+    <string name="auth_title">تسجيل الدخول / إنشاء حساب</string>
+    <string name="auth_phone_subtitle">أدخل رقم هاتفك المصري لاستلام رمز التحقق المكون من 6 أرقام</string>
+    <string name="auth_phone_hint">010 1234 5678</string>
+    <string name="auth_phone_prefix">20+</string>
+    <string name="auth_btn_send_otp">إرسال رمز التحقق</string>
+    <string name="auth_otp_title">تأكيد رمز التحقق</string>
+    <string name="auth_otp_subtitle">أدخل الرمز المكون من 6 أرقام المرسل إلى %1$s</string>
+    <string name="auth_otp_hint">رمز التحقق</string>
+    <string name="auth_btn_verify">تأكيد ومتابعة</string>
+    <string name="auth_btn_resend">إعادة إرسال الرمز</string>
+    <string name="auth_resend_countdown">إعادة الإرسال بعد %1$d ثانية</string>
+    <string name="auth_change_phone">تعديل رقم الهاتف</string>
+    <string name="auth_sign_out">تسجيل الخروج</string>
+    <string name="auth_sign_in">تسجيل الدخول / إنشاء حساب</string>
+    <string name="auth_privacy_note">بياناتك الصحية محمية تماماً وفق قانون حماية البيانات الشخصية رقم 151 لسنة 2020.</string>
+
+    <!-- Phase 3: Medicine Catalog, Details & Availability -->
+    <string name="search_no_results_title">لم نجد نتيجة مطابقة</string>
+    <string name="search_no_results_desc">جرّب اسمًا آخر أو ابحث بالمادة الفعالة أو التركيز.</string>
+    <string name="search_active_ingredient_prefix">المادة الفعالة:</string>
+    <string name="search_strength_prefix">التركيز:</string>
+    <string name="search_dosage_prefix">الشكل الدوائي:</string>
+    <string name="search_prescription_required">يتطلب روشتة طبية</string>
+    <string name="search_otc">صرف بدون روشتة (OTC)</string>
+    <string name="details_title">تفاصيل الدواء</string>
+    <string name="details_pharmacy_availability">توافر الدواء في الصيدليات الشريكة</string>
+    <string name="details_no_availability">لا توجد صيدلية شريكة قريبة تؤكد توافر هذا الدواء حالياً.</string>
+    <string name="details_last_synced">آخر تحديث: %1$s</string>
+    <string name="details_alternatives_title">البدائل الدوائية والمكافئات المعتمدة</string>
+    <string name="details_alternatives_disclaimer">تنبيه: البدائل المعروضة هي نتائج مطابقة مرجعية لنفس المادة الفعالة والتركيز والشكل الدوائي. يجب دائماً استشارة الطبيب أو الصيدلي قبل تبديل العلاج.</string>
+    <string name="details_no_alternatives">لا توجد بدائل تجارية مسجلة بهذه التركيبة الدقيقة حالياً.</string>
+    <string name="details_add_to_cart">إضافة إلى السلة (المرحلة 4)</string>
+    <string name="details_add_to_cart_gated">سيتم تفعيل السلة وإتمام الطلب في المرحلة الرابعة</string>
+    <string name="availability_status_available">متوفر</string>
+    <string name="availability_status_low_stock">كمية محدودة</string>
+    <string name="availability_status_out_of_stock">غير متوفر</string>
+    <string name="availability_status_reserved">محجوز</string>
+    <string name="availability_status_unavailable">غير متاح</string>
+    <string name="availability_status_expired">تشغيلة منتهية</string>
+    <string name="currency_egp">ج.م</string>
+
+    <!-- Phase 4: Cart, Checkout, and Order Confirmation -->
+    <string name="cart_title">سلة الأدوية</string>
+    <string name="cart_empty_title">سلتك فارغة حالياً</string>
+    <string name="cart_empty_desc">ابحث عن الأدوية وتحقق من توافرها في الصيدليات الشريكة لإضافتها إلى سلتك.</string>
+    <string name="cart_checkout_button">متابعة إتمام الطلب</string>
+    <string name="cart_subtotal_label">المجموع الفرعي التقديري:</string>
+    <string name="cart_delivery_fee_notice">سيتحدد رسم التوصيل بدقة من الخادم عند التأكيد.</string>
+    <string name="cart_pharmacy_fulfillment">الصيدلية المجهزة للطلب:</string>
+    <string name="cart_remove_item">حذف من السلة</string>
+    <string name="cart_item_added">تمت إضافة الدواء إلى السلة</string>
+    <string name="details_add_to_cart_action">إضافة إلى السلة</string>
+
+    <!-- Checkout -->
+    <string name="checkout_title">مراجعة وتأكيد الطلب</string>
+    <string name="checkout_address_section">عنوان التوصيل</string>
+    <string name="checkout_no_addresses">لا توجد عناوين توصيل مسجلة. يرجى إضافة عنوان للمتابعة.</string>
+    <string name="checkout_add_address_button">إضافة عنوان توصيل جديد</string>
+    <string name="checkout_save_address">حفظ العنوان</string>
+    <string name="checkout_payment_section">طريقة الدفع</string>
+    <string name="checkout_payment_cod">الدفع نقدًا عند الاستلام (COD)</string>
+    <string name="checkout_payment_cod_desc">السداد نقدًا للمندوب مباشرةً فور فحص واستلام الأدوية.</string>
+    <string name="checkout_pharmacy_section">الصيدلية الشريكة المجهزة</string>
+    <string name="checkout_items_summary">الأدوية المطلوبة</string>
+    <string name="checkout_delivery_fee_label">رسم التوصيل:</string>
+    <string name="checkout_delivery_fee_pending">سيتحدد عند التأكيد</string>
+    <string name="checkout_price_notice">يتم احتساب رسوم التوصيل والإجمالي النهائي بدقة وموثوقية من الخادم عند تسجيل الطلب.</string>
+    <string name="checkout_confirm_button">تأكيد الطلب (الدفع عند الاستلام)</string>
+    <string name="checkout_submitting">جارٍ تسجيل طلبك بأمان وتأكيده مع الخادم...</string>
+    <string name="checkout_auth_required_title">تسجيل الدخول مطلوب</string>
+    <string name="checkout_auth_required_desc">يرجى تسجيل الدخول برقم هاتفك المصري لإتمام وتأكيد طلب الدواء بأمان.</string>
+    <string name="checkout_session_expired">انتهت صلاحية الجلسة. يرجى إعادة تأكيد رقم الهاتف لمتابعة طلبك دون فقدان السلة.</string>
+
+    <!-- Address Form -->
+    <string name="address_label">اسم مميز للعنوان (مثال: المنزل، العمل)</string>
+    <string name="address_governorate">المحافظة</string>
+    <string name="address_city">المدينة / المركز</string>
+    <string name="address_area">المنطقة / الحي</string>
+    <string name="address_street">اسم الشارع</string>
+    <string name="address_building">رقم / اسم المبنى</string>
+    <string name="address_apartment">رقم الشقة (اختياري)</string>
+    <string name="address_floor">الدور (اختياري)</string>
+    <string name="address_landmark">علامة مميزة (اختياري)</string>
+    <string name="address_required_error">يرجى استكمال جميع بيانات العنوان الإلزامية.</string>
+
+    <!-- Order Confirmation -->
+    <string name="confirmation_title">تم تأكيد طلبك بنجاح!</string>
+    <string name="confirmation_subtitle">تم تسجيل طلبك بأمان وإرساله للصيدلية الشريكة للبدء في تجهيزه فوراً.</string>
+    <string name="confirmation_order_number">الرقم المرجعي للطلب</string>
+    <string name="confirmation_status">حالة الطلب</string>
+    <string name="confirmation_status_placed">تم التسجيل · قيد التجهيز</string>
+    <string name="confirmation_subtotal">المجموع الفرعي</string>
+    <string name="confirmation_delivery_fee">رسم التوصيل المعتمد</string>
+    <string name="confirmation_total">المبلغ الإجمالي المستحق عند الاستلام</string>
+    <string name="confirmation_payment_method">طريقة السداد</string>
+    <string name="confirmation_cta_orders">عرض طلباتي</string>
+    <string name="confirmation_cta_home">العودة للرئيسية</string>
+</resources>

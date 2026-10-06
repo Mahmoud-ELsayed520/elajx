@@ -1,0 +1,197 @@
+<resources>
+    <string name="app_name">ElajX</string>
+    <string name="app_name_ar">عِلاجِك</string>
+    <string name="app_tagline">Find your medicine without unnecessary searching and calls</string>
+    
+    <!-- Bootstrap Screen -->
+    <string name="bootstrap_title">ElajX System Foundation</string>
+    <string name="bootstrap_subtitle">Architecture, Security &amp; Contract Baseline</string>
+    <string name="env_label">Environment</string>
+    <string name="env_dev">Development</string>
+    <string name="env_staging">Staging</string>
+    <string name="env_prod">Production</string>
+    <string name="status_verified">Verified</string>
+    <string name="status_unbuilt">TBD / Deferred to Phase 1</string>
+    
+    <!-- Architectural Boundaries -->
+    <string name="boundary_architecture">Clean Architecture (Presentation / Domain / Data)</string>
+    <string name="boundary_supabase">Supabase Client-Safe Boundary (Untrusted Client)</string>
+    <string name="boundary_security">Security: Zero Secrets Embedded, Server-Authoritative</string>
+    <string name="boundary_auth">Auth Session Architecture (Guest Orders Prohibited)</string>
+    <string name="boundary_ai">AI Boundary: Assistant Only, Non-Authoritative</string>
+    <string name="boundary_rtl">RTL &amp; Accessibility Native Support</string>
+    
+    <!-- Session State -->
+    <string name="auth_state_title">Authentication State</string>
+    <string name="auth_state_unauthenticated">Unauthenticated (Browsing Only — Orders Locked)</string>
+    <string name="auth_state_authenticated">Authenticated User</string>
+    <string name="auth_state_loading">Checking Session...</string>
+    <string name="auth_state_expired">Session Expired</string>
+    
+    <!-- Actions -->
+    <string name="btn_reverify">Run Foundation Verification</string>
+    <string name="btn_toggle_auth">Simulate Auth State Toggle</string>
+    
+    <!-- Navigation Tabs -->
+    <string name="tab_home">Home</string>
+    <string name="tab_search">Search</string>
+    <string name="tab_prescriptions">Prescription</string>
+    <string name="tab_orders">Orders</string>
+    <string name="tab_account">Account</string>
+    
+    <!-- Common UI States -->
+    <string name="empty_state_title">No Items Yet</string>
+    <string name="empty_state_desc">Data will appear here after server synchronization.</string>
+    <string name="error_state_title">Unable to Complete Request</string>
+    <string name="error_state_desc">Check your network connection and try again.</string>
+    <string name="retry_action">Retry</string>
+    <string name="loading_label">Loading...</string>
+    
+    <!-- Phase 1: App Shell & Core Screen Inventory -->
+    <!-- Home Screen -->
+    <string name="home_greeting">Welcome to ElajX</string>
+    <string name="home_location_prefix">Delivering to:</string>
+    <string name="home_location_default">Cairo, Egypt</string>
+    <string name="home_search_placeholder">Search medicine or active ingredient...</string>
+    <string name="home_prescription_banner_title">Have a prescription?</string>
+    <string name="home_prescription_banner_desc">Scan to check medicine availability across nearby partner pharmacies</string>
+    <string name="home_prescription_banner_cta">Scan Prescription</string>
+    <string name="home_quick_actions">Quick Actions</string>
+    <string name="home_action_search">Search Medicine</string>
+    <string name="home_action_scan">Scan Prescription</string>
+    <string name="home_action_orders">My Orders</string>
+    <string name="home_action_baseline">System Baseline</string>
+    <string name="home_nearby_title">Nearby Medicine Availability</string>
+    <string name="home_nearby_empty_title">No Verified Pharmacies Connected Yet</string>
+    <string name="home_nearby_empty_desc">Live partner pharmacy inventory synchronization will be connected in Phase 3.</string>
+
+    <!-- Search Screen -->
+    <string name="search_title">Medicine Search</string>
+    <string name="search_input_hint">Search brand name, active ingredient or strength</string>
+    <string name="search_empty_prompt">Type medicine name to begin</string>
+    <string name="search_phase_note">Authoritative medicine index will be connected in Phase 3.</string>
+
+    <!-- Prescription Screen -->
+    <string name="prescription_title">Prescription Scanner</string>
+    <string name="prescription_intro_title">AI-Assisted Prescription Reading</string>
+    <string name="prescription_intro_desc">ElajX helps you extract medicine names from prescriptions. You must always review and confirm every detected candidate before ordering.</string>
+    <string name="prescription_disclaimer">Safety Principle: AI is an assistant, not a doctor or pharmacist. It does not diagnose, prescribe, or authorize drug substitutions.</string>
+    <string name="prescription_empty_title">You haven\'t scanned a prescription yet</string>
+    <string name="prescription_empty_desc">Upload or capture a prescription image to start the extraction workflow.</string>
+    <string name="prescription_cta">Upload / Capture Prescription (Phase 6)</string>
+
+    <!-- Orders Screen -->
+    <string name="orders_title">Order History</string>
+    <string name="orders_empty_title">No orders yet</string>
+    <string name="orders_empty_desc">Your active medicine requests and order history will appear here after checkout.</string>
+
+    <!-- Account Screen -->
+    <string name="account_title">Account &amp; System</string>
+    <string name="account_profile_title">Patient Profile</string>
+    <string name="account_guest_title">Guest Mode</string>
+    <string name="account_guest_desc">Catalog browsing is available. Order creation and saving prescriptions require authentication.</string>
+    <string name="account_auth_desc">Authenticated patient account. Orders and prescriptions enabled.</string>
+    <string name="account_system_info">System &amp; Architecture</string>
+    <string name="account_privacy_title">Privacy &amp; Compliance</string>
+    <string name="account_privacy_desc">Egyptian Law No. 151 of 2020 compliance. Prescriptions are stored in private buckets with zero client secrets.</string>
+    <string name="account_view_baseline">View Foundation Verification Baseline</string>
+    <string name="back_to_home">Back to Home</string>
+    <!-- Phase 2: Authentication & Patient Session -->
+    <string name="auth_title">Sign In / Register</string>
+    <string name="auth_phone_subtitle">Enter your Egyptian mobile number to receive a 6-digit verification code</string>
+    <string name="auth_phone_hint">010 1234 5678</string>
+    <string name="auth_phone_prefix">+20</string>
+    <string name="auth_btn_send_otp">Send Verification Code</string>
+    <string name="auth_otp_title">Verify Code</string>
+    <string name="auth_otp_subtitle">Enter the 6-digit code sent to %1$s</string>
+    <string name="auth_otp_hint">6-digit code</string>
+    <string name="auth_btn_verify">Verify &amp; Continue</string>
+    <string name="auth_btn_resend">Resend Code</string>
+    <string name="auth_resend_countdown">Resend in %1$ds</string>
+    <string name="auth_change_phone">Change Phone Number</string>
+    <string name="auth_sign_out">Sign Out</string>
+    <string name="auth_sign_in">Sign In / Register</string>
+    <string name="auth_privacy_note">Your health data is protected under Egyptian Law 151/2020.</string>
+
+    <!-- Phase 3: Medicine Catalog, Details & Availability -->
+    <string name="search_no_results_title">No Matching Medicine Found</string>
+    <string name="search_no_results_desc">Try searching by active ingredient or another brand name.</string>
+    <string name="search_active_ingredient_prefix">Active Ingredient:</string>
+    <string name="search_strength_prefix">Strength:</string>
+    <string name="search_dosage_prefix">Form:</string>
+    <string name="search_prescription_required">Prescription Required</string>
+    <string name="search_otc">OTC / Non-Prescription</string>
+    <string name="details_title">Medicine Details</string>
+    <string name="details_pharmacy_availability">Partner Pharmacy Availability</string>
+    <string name="details_no_availability">No nearby partner pharmacy currently reports verified stock for this medicine.</string>
+    <string name="details_last_synced">Last synced: %1$s</string>
+    <string name="details_alternatives_title">Equivalent Generic Alternatives</string>
+    <string name="details_alternatives_disclaimer">Notice: Alternatives are curated reference matches sharing identical active ingredient, strength, and dosage form. Always consult a physician or licensed pharmacist before substituting medications.</string>
+    <string name="details_no_alternatives">No verified generic alternatives cataloged with this exact formulation.</string>
+    <string name="details_add_to_cart">Add to Cart (Phase 4)</string>
+    <string name="details_add_to_cart_gated">Cart and checkout will be enabled in Phase 4</string>
+    <string name="availability_status_available">In Stock</string>
+    <string name="availability_status_low_stock">Low Stock</string>
+    <string name="availability_status_out_of_stock">Out of Stock</string>
+    <string name="availability_status_reserved">Reserved</string>
+    <string name="availability_status_unavailable">Unavailable</string>
+    <string name="availability_status_expired">Expired Batch</string>
+    <string name="currency_egp">EGP</string>
+
+    <!-- Phase 4: Cart, Checkout, and Order Confirmation -->
+    <string name="cart_title">Shopping Cart</string>
+    <string name="cart_empty_title">Your Cart is Empty</string>
+    <string name="cart_empty_desc">Search for medicines and check nearby partner pharmacy availability to add items to your cart.</string>
+    <string name="cart_checkout_button">Proceed to Checkout</string>
+    <string name="cart_subtotal_label">Estimated Subtotal:</string>
+    <string name="cart_delivery_fee_notice">Delivery fee will be calculated server-side at confirmation.</string>
+    <string name="cart_pharmacy_fulfillment">Fulfilling Pharmacy:</string>
+    <string name="cart_remove_item">Remove item</string>
+    <string name="cart_item_added">Medication added to cart</string>
+    <string name="details_add_to_cart_action">Add to Cart</string>
+
+    <!-- Checkout -->
+    <string name="checkout_title">Review &amp; Place Order</string>
+    <string name="checkout_address_section">Delivery Address</string>
+    <string name="checkout_no_addresses">No saved delivery address found. Please add an address to continue.</string>
+    <string name="checkout_add_address_button">Add New Delivery Address</string>
+    <string name="checkout_save_address">Save Address</string>
+    <string name="checkout_payment_section">Payment Method</string>
+    <string name="checkout_payment_cod">Cash on Delivery (COD)</string>
+    <string name="checkout_payment_cod_desc">Pay in cash directly to the courier upon delivery.</string>
+    <string name="checkout_pharmacy_section">Fulfillment Partner Pharmacy</string>
+    <string name="checkout_items_summary">Order Items</string>
+    <string name="checkout_delivery_fee_label">Delivery Fee:</string>
+    <string name="checkout_delivery_fee_pending">Determined at confirmation</string>
+    <string name="checkout_price_notice">Final delivery fee and grand total are calculated server-side upon order creation.</string>
+    <string name="checkout_confirm_button">Confirm Order (COD)</string>
+    <string name="checkout_submitting">Placing Order Securely...</string>
+    <string name="checkout_auth_required_title">Authentication Required</string>
+    <string name="checkout_auth_required_desc">Sign in with your phone number to securely place your order.</string>
+    <string name="checkout_session_expired">Session expired. Please verify your phone number to resume your order.</string>
+
+    <!-- Address Form -->
+    <string name="address_label">Address Label (e.g. Home, Work)</string>
+    <string name="address_governorate">Governorate</string>
+    <string name="address_city">City</string>
+    <string name="address_area">Area / District</string>
+    <string name="address_street">Street Name</string>
+    <string name="address_building">Building Number / Name</string>
+    <string name="address_apartment">Apartment (Optional)</string>
+    <string name="address_floor">Floor (Optional)</string>
+    <string name="address_landmark">Nearby Landmark (Optional)</string>
+    <string name="address_required_error">Please fill in all required address fields.</string>
+
+    <!-- Order Confirmation -->
+    <string name="confirmation_title">Order Confirmed!</string>
+    <string name="confirmation_subtitle">Your medication order has been securely submitted to the partner pharmacy.</string>
+    <string name="confirmation_order_number">Order Reference Number</string>
+    <string name="confirmation_status">Status</string>
+    <string name="confirmation_status_placed">Placed · Under Preparation</string>
+    <string name="confirmation_subtotal">Subtotal</string>
+    <string name="confirmation_delivery_fee">Delivery Fee (Authoritative)</string>
+    <string name="confirmation_total">Total Due on Delivery</string>
+    <string name="confirmation_payment_method">Payment</string>
+    <string name="confirmation_cta_orders">View My Orders</string>
+    <string name="confirmation_cta_home">Back to Home</string>
+</resources>

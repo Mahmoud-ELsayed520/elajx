@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix Remix Remix ElajX",
+  "description": "ElajX (عِلاجِك) - Medication availability and AI-assisted prescription platform connecting patients with participating pharmacies.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
